@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Мои заказы</h1>
+
+    {% if orders %}
+        <div class="list-group">
+            {% for order in orders %}
+            <div class="list-group-item mb-3">
+                <div class="d-flex justify-content-between">
+                    <h5>Заказ #{{ order.id }}</h5>
+                    <div>
+                        <span class="badge bg-secondary">{{ order.get_status_display }}</span>
+                        <span class="ms-2">{{ order.created_at|date:"d.m.Y H:i" }}</span>
+                    </div>
+                </div>
+                <p class="mb-1">Сумма: {{ order.total_price }} руб.</p>
+
+                <div class="mt-2">
+                    <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#orderDetails{{ order.id }}">
+                        Показать детали
+                    </button>
+                </div>
+
+                <div class="collapse mt-2" id="orderDetails{{ order.id }}">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Книга</th>
+                                <th>Количество</th>
+                                <th>Цена</th>
+                                <th>Сумма</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.items.all %}
+                            <tr>
+                                <td>{{ item.book.title }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>{{ item.price }} руб.</td>
+                                <td>{{ item.get_total_price }} руб.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            У вас пока нет заказов
+        </div>
+        <a href="{% url 'book_list' %}" class="btn btn-primary">
+            Перейти в каталог
+        </a>
+    {% endif %}
+</div>
+{% endblock %}
